@@ -23,6 +23,21 @@ mcp-publisher publish
 
 See the [registry quickstart](https://modelcontextprotocol.io/registry/quickstart) for details.
 
+## Publish to Smithery (stdio bundle)
+
+Smithery's web form only accepts hosted HTTP servers; local stdio servers are published as an MCPB
+bundle. Build the bundle from the `mcpb/` staging layout (manifest v0.3, `uvx` command), then submit
+a release to `PUT https://api.smithery.ai/servers/teodormcp%2Funiversal-connector-mcp/releases`
+(multipart: `payload` = StdioDeployPayload JSON with a `serverCard`, `bundle` = the `.mcpb` file;
+Bearer key from `%APPDATA%\smithery\settings.json` after `smithery auth login`):
+
+```bash
+npx @anthropic-ai/mcpb pack mcpb dist/universal-connector-mcp.mcpb
+```
+
+Note: `smithery mcp publish` CLI currently fails with "No values to set" for stdio bundles; the
+direct API call above works.
+
 ## Directory submissions (one-time / occasional)
 
 - [cursor.directory](https://cursor.directory)
