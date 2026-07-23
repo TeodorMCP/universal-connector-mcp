@@ -21,6 +21,8 @@ can call it. Securely, in fewer steps, with fewer tokens.
 
 [Installation](#installation) · [Meta-tools](#meta-tools) · [API catalog](#built-in-api-catalog) · [Examples](#example-session) · [Configuration](#configuration) · [Security](#security-model)
 
+![Live demo: the agent discovers, loads and calls an API in a single session](https://raw.githubusercontent.com/TeodorMCP/universal-connector-mcp/main/assets/demo.gif)
+
 </div>
 
 ## Why another one?
