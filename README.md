@@ -1,16 +1,27 @@
-# Universal API Connector MCP
+﻿<!-- mcp-name: io.github.TeodorMCP/universal-connector-mcp -->
 
-<!-- mcp-name: io.github.TeodorMCP/universal-connector-mcp -->
+<div align="center">
+
+# Universal API Connector MCP
 
 ![Universal API Connector - Any API. One MCP server.](assets/banner.png)
 
-**Any API. One MCP server.** Stop installing a new MCP server for every service: point this one at any OpenAPI/Swagger, GraphQL, gRPC or SOAP spec - or pick one from the built-in catalog of 2500+ public APIs - and your AI agent can call it. Securely, in fewer steps, with fewer tokens.
+### Any API. One MCP server.
+
+Stop installing a new MCP server for every service: point this one at any OpenAPI/Swagger, GraphQL,<br>
+gRPC or SOAP spec - or pick one from the built-in catalog of **2500+ public APIs** - and your AI agent<br>
+can call it. Securely, in fewer steps, with fewer tokens.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/TeodorMCP/universal-connector-mcp/ci.yml?label=CI)](https://github.com/TeodorMCP/universal-connector-mcp/actions)
 [![PyPI](https://img.shields.io/pypi/v/universal-connector-mcp)](https://pypi.org/project/universal-connector-mcp/)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Add to Cursor](https://img.shields.io/badge/Add%20to-Cursor-black)](cursor://anysphere.cursor-deeplink/mcp/install?name=universal-connector&config=eyJjb21tYW5kIjoidXZ4IiwiYXJncyI6WyJ1bml2ZXJzYWwtY29ubmVjdG9yLW1jcCJdfQ==)
+
+[![Add to Cursor](https://img.shields.io/badge/%E2%86%92%20Add%20to-Cursor-black?style=for-the-badge)](cursor://anysphere.cursor-deeplink/mcp/install?name=universal-connector&config=eyJjb21tYW5kIjoidXZ4IiwiYXJncyI6WyJ1bml2ZXJzYWwtY29ubmVjdG9yLW1jcCJdfQ==)
+
+[Installation](#installation) · [Meta-tools](#meta-tools) · [API catalog](#built-in-api-catalog) · [Examples](#example-session) · [Configuration](#configuration) · [Security](#security-model)
+
+</div>
 
 ```mermaid
 flowchart LR
@@ -103,7 +114,7 @@ The catalog is discovery-only: it returns spec URLs, never loads or executes any
 
 ## Installation
 
-Once published to PyPI, the server runs in any MCP host via [`uvx`](https://docs.astral.sh/uv/) (no manual install; add `[all]` for GraphQL/gRPC/SOAP support):
+The server runs in any MCP host via [`uvx`](https://docs.astral.sh/uv/) - no manual install needed, the package is fetched from [PyPI](https://pypi.org/project/universal-connector-mcp/) automatically (add `[all]` for GraphQL/gRPC/SOAP support):
 
 ```json
 {
@@ -127,7 +138,7 @@ One click via the badge above, or add the JSON block to `.cursor/mcp.json` in yo
 
 ### Claude Desktop
 
-Add the same `mcpServers` block to `claude_desktop_config.json` (Settings > Developer > Edit Config). A one-click `.mcpb` bundle (drag-and-drop install, [MCP Bundles](https://github.com/modelcontextprotocol/mcpb)) will be published with the first release.
+Add the same `mcpServers` block to `claude_desktop_config.json` (Settings > Developer > Edit Config).
 
 ### Claude Code
 
@@ -241,12 +252,7 @@ ruff check .    # lint
 
 CI runs lint + tests on every push ([.github/workflows/ci.yml](.github/workflows/ci.yml)); tagging `v*` builds and publishes to PyPI via trusted publishing ([.github/workflows/release.yml](.github/workflows/release.yml)).
 
-## Release checklist
-
-1. On [PyPI](https://pypi.org), add this repo as a **trusted publisher** for the `universal-connector-mcp` project (workflow `release.yml`, environment `pypi`); then push a `v0.1.0` tag to publish.
-2. Publish to the [official MCP Registry](https://modelcontextprotocol.io/registry/quickstart): `mcp-publisher login github`, then `mcp-publisher publish` (uses [server.json](server.json); the `mcp-name` marker in this README verifies PyPI ownership).
-3. Submit to directories: [cursor.directory](https://cursor.directory), [mcp.so](https://mcp.so), [Smithery](https://smithery.ai), [PulseMCP](https://www.pulsemcp.com), and open a PR to the community list in `modelcontextprotocol/servers`.
-4. Optional: build a one-click `.mcpb` bundle for Claude Desktop with `mcp2mcpb universal-connector-mcp --registry pypi --mode complete` and attach it to the GitHub release.
+Releases are automated: tagging `v*` publishes to PyPI via trusted publishing (see [docs/RELEASING.md](docs/RELEASING.md)).
 
 ## Security model
 
