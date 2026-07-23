@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "universal-connector": {
+      "command": "uvx",
+      "args": ["universal-connector-mcp"]
+    }
+  }
+}
