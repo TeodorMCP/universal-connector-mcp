@@ -1,4 +1,4 @@
-﻿# Marketing copy kit
+# Marketing copy kit
 
 Ready-to-paste texts for every distribution channel. Repository: https://github.com/TeodorMCP/universal-connector-mcp
 

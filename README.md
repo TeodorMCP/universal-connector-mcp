@@ -1,4 +1,4 @@
-﻿<!-- mcp-name: io.github.TeodorMCP/universal-connector-mcp -->
+<!-- mcp-name: io.github.TeodorMCP/universal-connector-mcp -->
 
 <div align="center">
 
