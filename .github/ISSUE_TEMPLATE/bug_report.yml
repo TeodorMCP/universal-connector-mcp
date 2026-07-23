@@ -1,0 +1,42 @@
+name: Bug report
+description: Something doesn't work as documented
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Output of `pip show universal-connector-mcp` or the tag you installed
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: client
+    attributes:
+      label: MCP client
+      placeholder: Cursor / Claude Desktop / Claude Code / VS Code / ...
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Which API/spec did you load, which tool call failed? Redact any secrets.
+      placeholder: |
+        1. load_api(spec="https://...", name="...")
+        2. execute(operation_id="...", params={...})
+        3. Error: ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / error output
+      description: Server stderr or the error returned to the agent. Never paste tokens or API keys.
+      render: text

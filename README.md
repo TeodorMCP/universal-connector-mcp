@@ -192,6 +192,8 @@ Each loaded operation gets an id namespaced as `<api>.<operation>` (e.g. `github
 
 ## Example session
 
+> More walkthroughs (weather, GitHub with auth, GraphQL, parallel multi-API workflows, internal APIs): [docs/EXAMPLES.md](docs/EXAMPLES.md)
+
 ```text
 search_catalog(query="github")
 load_api(spec="https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json", name="github")
@@ -247,7 +249,9 @@ pytest          # run the test suite
 ruff check .    # lint
 ```
 
-CI runs lint + tests on every push ([.github/workflows/ci.yml](.github/workflows/ci.yml)); tagging `v*` builds and publishes to PyPI via trusted publishing ([.github/workflows/release.yml](.github/workflows/release.yml)).
+The test suite (60+ tests) and lint run in CI on Ubuntu and Windows with Python 3.10 and 3.12 on every push ([.github/workflows/ci.yml](.github/workflows/ci.yml)); tagging `v*` builds and publishes to PyPI via trusted publishing ([.github/workflows/release.yml](.github/workflows/release.yml)).
+
+Contributions welcome - see [CONTRIBUTING.md](CONTRIBUTING.md). Security reports go through [private reporting](SECURITY.md).
 
 Releases are automated: tagging `v*` publishes to PyPI via trusted publishing (see [docs/RELEASING.md](docs/RELEASING.md)).
 
