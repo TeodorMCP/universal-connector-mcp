@@ -65,6 +65,7 @@ flowchart TD
 | `get_operation` | Full parameter/response schema for one operation |
 | `execute` | Call an operation (auth + security guard applied); `extract` returns only the fields you ask for |
 | `execute_chained` | Run a sequence of operations in one call, piping results between steps; nested lists run in parallel |
+| `execute_graph` | Run a dependency graph of operations; order is inferred from `${id.path}` references and independent nodes run in parallel automatically |
 | `unload_api` | Remove a loaded API |
 | `audit_log` | Recent outbound calls (method, host, path, status) |
 

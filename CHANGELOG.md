@@ -4,6 +4,18 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-07-23
+
+### Added
+
+- **`execute_graph` meta-tool**: run a dependency graph (DAG) of operations in a
+  single call. Execution order is inferred automatically from `${id.path}`
+  references between nodes (plus optional `depends_on`), and independent nodes
+  run concurrently (bounded by `max_concurrency`). Cycles and dangling references
+  are rejected up front; a failed node's dependents are skipped while independent
+  branches continue. Complements `execute_chained` (which stays for simple linear
+  sequences).
+
 ## [0.1.1] - 2026-07-23
 
 Security hardening release. Closes SSRF vectors reported in early code review.
@@ -49,5 +61,6 @@ First public release.
 - Distribution: PyPI package (`uvx universal-connector-mcp`), official MCP Registry entry,
   MCPB bundle, Open Plugins manifest.
 
+[0.2.0]: https://github.com/TeodorMCP/universal-connector-mcp/releases/tag/v0.2.0
 [0.1.1]: https://github.com/TeodorMCP/universal-connector-mcp/releases/tag/v0.1.1
 [0.1.0]: https://github.com/TeodorMCP/universal-connector-mcp/releases/tag/v0.1.0

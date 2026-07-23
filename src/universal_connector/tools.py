@@ -22,6 +22,7 @@ from universal_connector.cache import ResponseCache
 from universal_connector.catalog import Catalog
 from universal_connector.config import USER_AGENT, Config
 from universal_connector.executor.base import get_executor
+from universal_connector.graph import run_graph
 from universal_connector.models import Protocol
 from universal_connector.registry import (
     ApiAlreadyLoadedError,
@@ -470,6 +471,29 @@ class ConnectorService:
             if stop:
                 break
         return results
+
+    async def execute_graph(
+        self, nodes: list[dict[str, Any]], max_concurrency: int = 8
+    ) -> dict[str, dict[str, Any]]:
+        """Run a dependency graph of operations, maximizing parallelism automatically.
+
+        Each node is ``{"id", "operation_id", "params"?, "extract"?, "fresh"?,
+        "depends_on"?}``. Dependencies are inferred from ``${id.path}`` references
+        in params (plus any explicit ``depends_on``); independent nodes run
+        concurrently. A failed node's dependents are skipped; other branches
+        continue. Returns ``{node_id: result}``.
+        """
+
+        async def _run_node(node: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+            params = _resolve_refs(node.get("params", {}) or {}, context)
+            return await self.execute(
+                node["operation_id"],
+                params,
+                extract=node.get("extract"),
+                fresh=bool(node.get("fresh")),
+            )
+
+        return await run_graph(nodes, _run_node, max_concurrency=max_concurrency)
 
     async def search_catalog(
         self, query: str, limit: int = 10, include_directory: bool = True

@@ -113,7 +113,44 @@ execute_chained(steps=[
 ])
 ```
 
-## 5. Your own internal API
+## 5. Dependency graph (auto-parallelized)
+
+When steps have a *mix* of dependencies, `execute_graph` beats `execute_chained`: you don't
+order the steps or group the parallel ones by hand. Each node has an `id`, and the engine reads
+the `${id.path}` references to figure out what depends on what, then runs everything that is ready
+at the same time.
+
+Ask your agent: *"For torvalds' first repo, get its details and its open issues, and also fetch
+Berlin weather - all at once."*
+
+```text
+execute_graph(nodes=[
+  {"id": "repos", "operation_id": "github.repos_list_for_user",
+   "params": {"username": "torvalds"}, "extract": ["*.name"]},
+  {"id": "weather", "operation_id": "open_meteo.get_v1_forecast",
+   "params": {"latitude": 52.52, "longitude": 13.41, "current": "temperature_2m"},
+   "extract": ["current.temperature_2m"]},
+  {"id": "detail", "operation_id": "github.repos_get",
+   "params": {"owner": "torvalds", "repo": "${repos.data.0.name}"},
+   "extract": ["description", "stargazers_count"]},
+  {"id": "issues", "operation_id": "github.issues_list_for_repo",
+   "params": {"owner": "torvalds", "repo": "${repos.data.0.name}"}, "extract": ["*.title"]}
+])
+```
+
+The engine runs `repos` and `weather` immediately in parallel (neither depends on anything). As
+soon as `repos` finishes, `detail` and `issues` both start (they only need `repos`, not each
+other or `weather`). You never wrote "run these together" - the graph shape did it. The result is
+keyed by node id:
+
+```text
+{"repos": {...}, "weather": {"data": {"current.temperature_2m": 19.1}}, "detail": {...}, "issues": {...}}
+```
+
+If a node fails, its dependents come back as `{"skipped": true, "skipped_because": "<id>"}` while
+independent branches (here, `weather`) still complete.
+
+## 6. Your own internal API
 
 Any spec source works - URL, local file, or raw content:
 

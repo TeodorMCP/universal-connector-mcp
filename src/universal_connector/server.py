@@ -29,7 +29,7 @@ Typical workflow:
 2. load_api(spec=...) - register the API; pass name/base_url/protocol from the catalog result when present.
 3. search_operations(query=...) - discover operations; then get_operation(operation_id=...) for exact input schemas when parameters are unclear.
 4. execute(operation_id=..., params=...) - call it. Use extract=["path.to.field"] to receive only the fields you need instead of a full response.
-5. For multi-call workflows prefer ONE execute_chained call: steps pipe results via ${save_as.path} references, and a nested list of steps runs in parallel.
+5. For multi-call workflows prefer ONE call: execute_chained for a linear sequence (steps pipe results via ${save_as.path}; a nested list runs in parallel), or execute_graph when steps have mixed dependencies - name each node with an id, reference ${id.path} in params, and the engine parallelizes everything that is ready.
 
 Managing APIs is conversational: the user says "connect X" / "forget X" / "what is
 connected?" and you call load_api / unload_api / list_apis. If load_api reports
@@ -167,6 +167,38 @@ async def execute_chained(
         return await service.execute_chained(steps)
     except (OperationNotFoundError, SecurityError, ValueError) as exc:
         return [_error(exc)]
+
+
+@mcp.tool()
+async def execute_graph(
+    nodes: list[dict[str, Any]],
+    max_concurrency: int = 8,
+) -> dict[str, Any]:
+    """Execute a dependency graph of operations, auto-parallelizing independent ones.
+
+    Prefer this over `execute_chained` when steps have a mix of dependencies:
+    you do not order the steps or group parallel ones by hand. Instead each node
+    declares an ``id``, and the engine infers the execution order from the
+    ``${id.path}`` references in each node's params - running everything that is
+    ready at the same time.
+
+    Each node is ``{"id", "operation_id", "params"?, "extract"?, "fresh"?,
+    "depends_on"?}``. A ``${other.data.x}`` reference in params makes this node
+    wait for ``other``; ``depends_on: ["id"]`` adds an ordering-only dependency.
+    If a node fails, its dependents are skipped (``{"skipped": true,
+    "skipped_because": ...}``) while independent branches keep running.
+
+    Returns an object keyed by node id: ``{"<id>": <result>, ...}``.
+
+    Args:
+        nodes: The graph nodes. Ids must be unique; references and depends_on
+            must point to other node ids; cycles are rejected.
+        max_concurrency: Maximum number of nodes to run at once.
+    """
+    try:
+        return await service.execute_graph(nodes, max_concurrency=max_concurrency)
+    except (OperationNotFoundError, SecurityError, ValueError) as exc:
+        return _error(exc)
 
 
 @mcp.tool()

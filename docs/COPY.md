@@ -1,4 +1,4 @@
-# Marketing copy kit
+﻿# Marketing copy kit
 
 Ready-to-paste texts for every distribution channel. Repository: https://github.com/TeodorMCP/universal-connector-mcp
 
@@ -14,7 +14,7 @@ Topics: `mcp` `model-context-protocol` `openapi` `graphql` `grpc` `soap` `ai-age
 
 ## One-paragraph description (mcp.so, Smithery, PulseMCP, cursor.directory)
 
-> Universal API Connector turns any API into agent tools - without writing integration code. Load an OpenAPI/Swagger, GraphQL, gRPC or SOAP spec (or pick one from the built-in catalog of 2500+ public APIs) and the agent discovers and calls operations through 9 meta-tools instead of hundreds of per-endpoint tools. Field-level response filtering, chained/parallel execution and response caching keep workflows to a single tool call and responses small. Security-first by design: outbound host allowlist, secret redaction, size-capped responses and a full audit log. Local-first: no telemetry, no code execution, no binary downloads.
+> Universal API Connector turns any API into agent tools - without writing integration code. Load an OpenAPI/Swagger, GraphQL, gRPC or SOAP spec (or pick one from the built-in catalog of 2500+ public APIs) and the agent discovers and calls operations through 10 meta-tools instead of hundreds of per-endpoint tools. Field-level response filtering, dependency-graph and chained/parallel execution and response caching keep workflows to a single tool call and responses small. Security-first by design: outbound host allowlist, SSRF protection, secret redaction, size-capped responses and a full audit log. Local-first: no telemetry, no code execution, no binary downloads.
 
 ## Elevator pitch (long-form: blog intro, submission forms with room)
 
@@ -30,7 +30,7 @@ Title: `Show HN: One MCP server that connects AI agents to any API (OpenAPI/Grap
 
 > Hi HN! We got tired of installing a separate MCP server for every service - each one dumping 50+ tools into the agent's context - so we built a universal connector instead.
 >
-> You point it at an API spec (or search its built-in catalog: a curated list plus the APIs.guru directory, 2500+ public OpenAPI specs) and the agent gets 9 meta-tools: search the catalog, load an API, search/inspect operations, execute. It works with OpenAPI, GraphQL, gRPC (server reflection) and SOAP through one normalized operation model.
+> You point it at an API spec (or search its built-in catalog: a curated list plus the APIs.guru directory, 2500+ public OpenAPI specs) and the agent gets 10 meta-tools: search the catalog, load an API, search/inspect operations, execute (single, chained, or as a dependency graph). It works with OpenAPI, GraphQL, gRPC (server reflection) and SOAP through one normalized operation model.
 >
 > The interesting parts: field-level response filtering (`extract=["items.*.name"]` returns just that), chained execution with `${step.path}` references and parallel groups (whole multi-API workflows in one tool call), and a short-TTL cache for reads. Security was a design constraint from day one after the recent MCP supply-chain attacks: outbound allowlist, secret redaction, response caps, audit log, no code execution, no telemetry.
 >
@@ -42,7 +42,7 @@ Title: `I built one MCP server that talks to any API (OpenAPI/GraphQL/gRPC/SOAP)
 
 > The problem: every API = another MCP server = another 50 tools in context, another supply-chain risk.
 >
-> My take on it: a single connector with 9 meta-tools. `search_catalog` finds a spec (curated list + APIs.guru, 2500+ APIs), `load_api` registers it, `search_operations`/`get_operation` explore it like a filesystem, `execute` calls it.
+> My take on it: a single connector with 10 meta-tools. `search_catalog` finds a spec (curated list + APIs.guru, 2500+ APIs), `load_api` registers it, `search_operations`/`get_operation` explore it like a filesystem, `execute` calls it (and `execute_graph` runs a whole dependency graph in one shot).
 >
 > What I think makes it different:
 > - `extract` - name the fields you want, get only those back (huge token saver)
