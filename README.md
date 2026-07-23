@@ -23,18 +23,6 @@ can call it. Securely, in fewer steps, with fewer tokens.
 
 </div>
 
-```mermaid
-flowchart LR
-    subgraph before ["Without - one server per API"]
-        A1[GitHub MCP] --- A2[Stripe MCP] --- A3[Weather MCP] --- A4["...200+ tools in context"]
-    end
-    subgraph after ["With - one connector"]
-        Agent[AI Agent] -->|"9 meta-tools"| UC[Universal Connector]
-        UC --> AnyAPI["Any OpenAPI / GraphQL / gRPC / SOAP API"]
-    end
-    before -.-> after
-```
-
 ## Why another one?
 
 Most "universal API" MCP servers only speak REST/OpenAPI. This project is built around three differentiators:
@@ -45,7 +33,12 @@ Most "universal API" MCP servers only speak REST/OpenAPI. This project is built 
 
 ## How it works
 
+![One connector, every protocol](assets/how-it-works.png)
+
 The agent explores APIs like a filesystem instead of loading hundreds of tools at once (which would blow up the context window on large APIs like Stripe). It searches for operations, inspects the ones it needs, then executes them.
+
+<details>
+<summary>Architecture (click to expand)</summary>
 
 ```mermaid
 flowchart TD
@@ -58,6 +51,8 @@ flowchart TD
     Executor --> Auth["Auth Manager"]
     Executor --> UpstreamAPI["Upstream API"]
 ```
+
+</details>
 
 ## Meta-tools
 
@@ -74,6 +69,8 @@ flowchart TD
 | `audit_log` | Recent outbound calls (method, host, path, status) |
 
 ## Why fewer steps (and fewer tokens)
+
+![Fewer steps, fewer tokens](assets/fewer-steps.png)
 
 Where a per-API MCP server needs one tool round-trip per call - each returning a full JSON payload into the agent's context - this server collapses whole workflows:
 
