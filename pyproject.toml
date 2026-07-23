@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "universal-connector-mcp"
-version = "0.1.0"
+version = "0.1.1"
 description = "A security-first, local-first MCP server that connects any API (OpenAPI/GraphQL/gRPC/SOAP) to AI agents through a single normalized operation model."
 readme = "README.md"
 requires-python = ">=3.10"

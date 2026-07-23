@@ -54,6 +54,12 @@ class Config:
     denied_hosts: list[str] = field(default_factory=list)
     allow_all_hosts: bool = False
     max_response_bytes: int = 100_000
+    # Block outbound requests to private / loopback / link-local / cloud-metadata
+    # addresses (SSRF protection). Hosts in allowed_hosts (or allow_all_hosts)
+    # bypass this, so internal APIs are still reachable when explicitly opted in.
+    block_private_ips: bool = True
+    # Maximum redirects to follow; every hop is re-checked against the guard.
+    max_redirects: int = 5
 
     # HTTP executor
     http_timeout: float = 30.0
@@ -92,6 +98,8 @@ class Config:
             denied_hosts=_env_list("DENIED_HOSTS"),
             allow_all_hosts=_env_bool("ALLOW_ALL_HOSTS", False),
             max_response_bytes=_env_int("MAX_RESPONSE_BYTES", 100_000),
+            block_private_ips=_env_bool("BLOCK_PRIVATE_IPS", True),
+            max_redirects=_env_int("MAX_REDIRECTS", 5),
             http_timeout=float(_env_int("HTTP_TIMEOUT", 30)),
             max_retries=_env_int("MAX_RETRIES", 2),
             cache_ttl=float(_env_int("CACHE_TTL", 60)),

@@ -20,6 +20,7 @@ from universal_connector.executor.base import ExecutionResult, Executor
 from universal_connector.models import Operation, ParameterLocation, Protocol
 from universal_connector.security.audit import AuditEntry, AuditLog
 from universal_connector.security.guard import SecurityError, SecurityGuard
+from universal_connector.security.net import guarded_send
 
 _RETRY_STATUS = {429, 502, 503, 504}
 
@@ -109,11 +110,11 @@ class HttpExecutor(Executor):
 
         attempt = 0
         last_error: str | None = None
-        async with httpx.AsyncClient(timeout=self._timeout, follow_redirects=True) as client:
+        async with httpx.AsyncClient(timeout=self._timeout, follow_redirects=False) as client:
             while attempt <= self._max_retries:
                 attempt += 1
                 try:
-                    response = await client.request(
+                    request = client.build_request(
                         operation.method,
                         url,
                         params=query or None,
@@ -122,6 +123,11 @@ class HttpExecutor(Executor):
                         json=json_body,
                         content=content,
                     )
+                    response = await guarded_send(
+                        client, request, guard, enforce_allowlist=True
+                    )
+                except SecurityError as exc:
+                    return ExecutionResult(ok=False, error=str(exc))
                 except httpx.TimeoutException:
                     last_error = "Request timed out."
                 except httpx.HTTPError as exc:

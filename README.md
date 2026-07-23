@@ -228,7 +228,9 @@ All settings are environment variables prefixed with `UCMCP_`:
 | --- | --- | --- |
 | `UCMCP_ALLOWED_HOSTS` | (empty) | Comma-separated extra hosts allowed for outbound calls. Prefix with `.` for suffix matches. |
 | `UCMCP_DENIED_HOSTS` | (empty) | Comma-separated hosts always blocked (wins over allow). |
-| `UCMCP_ALLOW_ALL_HOSTS` | `false` | Disable the allowlist entirely (not recommended). |
+| `UCMCP_ALLOW_ALL_HOSTS` | `false` | Disable the allowlist entirely (not recommended). Does not disable private-IP blocking. |
+| `UCMCP_BLOCK_PRIVATE_IPS` | `true` | Block outbound calls that resolve to private/loopback/link-local/cloud-metadata IPs (SSRF protection). |
+| `UCMCP_MAX_REDIRECTS` | `5` | Max HTTP redirects to follow; every hop is re-checked against the guard. |
 | `UCMCP_MAX_RESPONSE_BYTES` | `100000` | Response body cap sent back to the agent. |
 | `UCMCP_HTTP_TIMEOUT` | `30` | Per-request timeout (seconds). |
 | `UCMCP_MAX_RETRIES` | `2` | Retries on transient HTTP failures (429/502/503/504). |
@@ -258,6 +260,7 @@ Releases are automated: tagging `v*` publishes to PyPI via trusted publishing (s
 ## Security model
 
 - **Outbound allowlist** - by default only hosts of explicitly loaded specs are reachable. Extend/limit via `UCMCP_ALLOWED_HOSTS` / `UCMCP_DENIED_HOSTS`.
+- **SSRF protection** - requests that resolve to private, loopback, link-local, reserved or cloud-metadata addresses are blocked (including spec fetches, GraphQL introspection and SOAP imports). Every redirect hop is re-validated. Reaching an internal address requires an explicit `UCMCP_ALLOWED_HOSTS` entry.
 - **Secret handling** - credentials come from environment variables or the OS keyring, are injected only at request time, and are redacted from audit logs and errors.
 - **Response caps** - responses are truncated to a configurable byte limit to protect the context window.
 - **Audit log** - method, host, path and status of every outbound call (never secrets or bodies) are recorded.

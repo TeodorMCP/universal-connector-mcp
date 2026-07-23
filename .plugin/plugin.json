@@ -1,6 +1,6 @@
 {
   "name": "universal-connector",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Connect any API to your AI agent through one MCP server: OpenAPI, GraphQL, gRPC and SOAP, with a built-in catalog of 2500+ public APIs. Security-first, local-first, token-efficient.",
   "author": {
     "name": "TeodorMCP",

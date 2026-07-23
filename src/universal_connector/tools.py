@@ -31,6 +31,7 @@ from universal_connector.registry import (
 )
 from universal_connector.security.audit import AuditLog
 from universal_connector.security.guard import SecurityGuard
+from universal_connector.security.net import guarded_send
 
 _REF_PATTERN = re.compile(r"\$\{([^}]+)\}")
 
@@ -140,10 +141,18 @@ class ConnectorService:
     async def _read_spec(self, source: str) -> str:
         parts = urlsplit(source)
         if parts.scheme in {"http", "https"}:
+            # Spec fetching does not enforce the allowlist (you must be able to
+            # load specs from arbitrary public hosts), but it MUST still block
+            # SSRF to private/internal addresses and re-check every redirect.
             async with httpx.AsyncClient(
-                timeout=self.config.http_timeout, headers={"User-Agent": USER_AGENT}
+                timeout=self.config.http_timeout,
+                headers={"User-Agent": USER_AGENT},
+                follow_redirects=False,
             ) as client:
-                resp = await client.get(source, follow_redirects=True)
+                request = client.build_request("GET", source)
+                resp = await guarded_send(
+                    client, request, self.guard, enforce_allowlist=False
+                )
                 resp.raise_for_status()
                 return resp.text
         candidate = Path(source)
@@ -168,9 +177,14 @@ class ConnectorService:
 
         query = get_introspection_query()
         async with httpx.AsyncClient(
-            timeout=self.config.http_timeout, headers={"User-Agent": USER_AGENT}
+            timeout=self.config.http_timeout,
+            headers={"User-Agent": USER_AGENT},
+            follow_redirects=False,
         ) as client:
-            resp = await client.post(endpoint, json={"query": query})
+            request = client.build_request("POST", endpoint, json={"query": query})
+            resp = await guarded_send(
+                client, request, self.guard, enforce_allowlist=False
+            )
             resp.raise_for_status()
             return resp.text
 

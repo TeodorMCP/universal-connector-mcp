@@ -4,6 +4,30 @@ All notable changes to this project are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-07-23
+
+Security hardening release. Closes SSRF vectors reported in early code review.
+
+### Security
+
+- **SSRF protection**: outbound requests (including spec fetches and GraphQL
+  introspection) now block hosts that resolve to private, loopback, link-local,
+  reserved or cloud-metadata (`169.254.169.254`) addresses. Reaching an internal
+  address requires an explicit `UCMCP_ALLOWED_HOSTS` entry or
+  `UCMCP_BLOCK_PRIVATE_IPS=false`. Disabling the allowlist (`UCMCP_ALLOW_ALL_HOSTS`)
+  no longer opens the internal network.
+- **Redirect safety**: HTTP redirects are followed manually and every hop is
+  re-validated against the allowlist and the private-IP check, so a redirect can
+  no longer escape to a blocked host. Redirect count is capped (`UCMCP_MAX_REDIRECTS`).
+- **Spec-fetch guard**: `load_api` spec downloads and GraphQL introspection now go
+  through the security guard instead of an unchecked client.
+- **SOAP imports**: the WSDL is loaded from already-fetched content and remote
+  WSDL/XSD imports are routed through a transport that blocks private-IP targets.
+
+### Added
+
+- `UCMCP_BLOCK_PRIVATE_IPS` (default `true`) and `UCMCP_MAX_REDIRECTS` (default `5`) settings.
+
 ## [0.1.0] - 2026-07-23
 
 First public release.
@@ -25,4 +49,5 @@ First public release.
 - Distribution: PyPI package (`uvx universal-connector-mcp`), official MCP Registry entry,
   MCPB bundle, Open Plugins manifest.
 
+[0.1.1]: https://github.com/TeodorMCP/universal-connector-mcp/releases/tag/v0.1.1
 [0.1.0]: https://github.com/TeodorMCP/universal-connector-mcp/releases/tag/v0.1.0

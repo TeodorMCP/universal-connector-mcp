@@ -126,6 +126,16 @@ Only `billing.internal.example.com` gets added to the outbound allowlist - the s
 refuses to call anything else. Credentials follow the same convention: set
 `BILLING_TOKEN` / `BILLING_API_KEY` in the config `env` block.
 
+**Internal / private-network hosts**: SSRF protection blocks addresses that resolve to
+private, loopback or link-local IPs by default. To reach an internal API, add its host to
+`UCMCP_ALLOWED_HOSTS` (this is the explicit opt-in that lifts the private-IP block for that host):
+
+```json
+{ "env": { "UCMCP_ALLOWED_HOSTS": "billing.internal.example.com" } }
+```
+
+Alternatively set `UCMCP_BLOCK_PRIVATE_IPS=false` to disable the check globally (not recommended).
+
 ## Debugging tips
 
 - `audit_log()` shows the last outbound calls: method, host, path, status - never bodies or secrets.

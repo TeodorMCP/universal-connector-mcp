@@ -8,6 +8,8 @@ trying to flatten the whole XSD into JSON schema.
 
 from __future__ import annotations
 
+import ipaddress
+import socket
 import tempfile
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -23,12 +25,68 @@ from universal_connector.models import (
 
 
 def _wsdl_location(content: str, source: str) -> str:
-    """zeep loads from a URL/path; if we only have raw XML, spill to a temp file."""
-    if source.startswith("http") or Path(source).exists():
+    """Always load the main WSDL from local content.
+
+    The content was already fetched through the SSRF-guarded spec reader, so we
+    spill it to a temp file rather than handing zeep a URL to re-fetch (which
+    would bypass the guard). Local file sources are used directly.
+    """
+    if source.startswith(("http://", "https://")):
+        tmp = Path(tempfile.gettempdir()) / "ucmcp_soap.wsdl"
+        tmp.write_text(content, encoding="utf-8")
+        return str(tmp)
+    if Path(source).exists():
         return source
     tmp = Path(tempfile.gettempdir()) / "ucmcp_soap.wsdl"
     tmp.write_text(content, encoding="utf-8")
     return str(tmp)
+
+
+def _guarded_transport():
+    """A zeep Transport whose session blocks private/internal addresses.
+
+    WSDL/XSD ``import`` directives make zeep fetch further documents; without
+    this, those fetches would skip the security guard entirely (SSRF vector).
+    """
+    import requests
+    from requests.adapters import HTTPAdapter
+    from zeep import Transport
+
+    def _blocked(host: str) -> bool:
+        try:
+            infos = socket.getaddrinfo(host, None, 0, socket.SOCK_STREAM)
+        except socket.gaierror:
+            return False
+        for info in infos:
+            try:
+                ip = ipaddress.ip_address(info[4][0])
+            except ValueError:
+                continue
+            if (
+                ip.is_private
+                or ip.is_loopback
+                or ip.is_link_local
+                or ip.is_reserved
+                or ip.is_multicast
+                or ip.is_unspecified
+            ):
+                return True
+        return False
+
+    class _GuardedAdapter(HTTPAdapter):
+        def send(self, request, *args, **kwargs):  # noqa: ANN001, ANN002
+            host = urlsplit(request.url).hostname or ""
+            if _blocked(host):
+                raise AdapterError(
+                    f"Blocked SOAP import to private/internal host '{host}' (SSRF protection)."
+                )
+            return super().send(request, *args, **kwargs)
+
+    session = requests.Session()
+    adapter = _GuardedAdapter()
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    return Transport(session=session)
 
 
 class SoapAdapter(SpecAdapter):
@@ -51,7 +109,9 @@ class SoapAdapter(SpecAdapter):
 
         location = _wsdl_location(content, source)
         try:
-            client = Client(location)
+            client = Client(location, transport=_guarded_transport())
+        except AdapterError:
+            raise
         except Exception as exc:  # noqa: BLE001
             raise AdapterError(f"Could not parse WSDL: {exc}") from exc
 

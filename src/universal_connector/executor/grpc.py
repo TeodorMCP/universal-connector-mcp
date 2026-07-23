@@ -18,6 +18,7 @@ from universal_connector.executor.base import ExecutionResult, Executor
 from universal_connector.models import Operation, Protocol
 from universal_connector.security.audit import AuditEntry, AuditLog
 from universal_connector.security.guard import SecurityError, SecurityGuard
+from universal_connector.security.net import assert_public_host
 
 
 class GrpcExecutor(Executor):
@@ -40,6 +41,8 @@ class GrpcExecutor(Executor):
         host = urlsplit(url).hostname or ""
         try:
             guard.check_url(url)
+            if guard.block_private_ips and not guard.host_explicitly_allowed(host):
+                await assert_public_host(host)
         except SecurityError as exc:
             audit.record(self._entry(operation, host, False, str(exc)))
             return ExecutionResult(ok=False, error=str(exc))

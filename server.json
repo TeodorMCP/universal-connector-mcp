@@ -6,12 +6,12 @@
     "url": "https://github.com/TeodorMCP/universal-connector-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "universal-connector-mcp",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "transport": {
         "type": "stdio"
       },
@@ -35,6 +35,13 @@
           "description": "TTL in seconds for caching read-only responses (default 60, 0 disables).",
           "isRequired": false,
           "format": "number",
+          "isSecret": false
+        },
+        {
+          "name": "UCMCP_BLOCK_PRIVATE_IPS",
+          "description": "Block outbound calls to private/loopback/link-local/cloud-metadata IPs (SSRF protection). Default true.",
+          "isRequired": false,
+          "format": "string",
           "isSecret": false
         },
         {
