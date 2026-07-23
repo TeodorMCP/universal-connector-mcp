@@ -1,0 +1,30 @@
+# Optional preload config. Point UCMCP_APIS_CONFIG at this file to auto-load
+# these APIs when the server starts. Each entry mirrors the `load_api` tool.
+#
+# Fields:
+#   spec:     URL, local file path, or raw spec text (required)
+#   name:     short name used to namespace operations (optional; auto-derived)
+#   base_url: override the base URL / endpoint (optional)
+#   protocol: force protocol instead of auto-detect: openapi|graphql|grpc|soap
+
+apis:
+  - name: github
+    spec: https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json
+
+  # Free weather API, no key needed (from the built-in catalog).
+  - name: open_meteo
+    spec: https://raw.githubusercontent.com/open-meteo/open-meteo/main/openapi/forecast.yml
+    base_url: https://api.open-meteo.com
+
+  - name: countries
+    spec: https://countries.trevorblades.com/
+    base_url: https://countries.trevorblades.com/
+    protocol: graphql
+
+  # - name: numberconversion
+  #   spec: https://www.dataaccess.com/webservicesserver/NumberConversion.wso?WSDL
+  #   protocol: soap
+
+  # - name: greeter
+  #   spec: grpc://localhost:50051
+  #   protocol: grpc

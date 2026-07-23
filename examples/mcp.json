@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "universal-connector": {
+      "command": "uvx",
+      "args": ["universal-connector-mcp"],
+      "env": {
+        "UCMCP_ALLOWED_HOSTS": "api.github.com,api.stripe.com",
+        "UCMCP_MAX_RESPONSE_BYTES": "100000",
+        "UCMCP_CACHE_TTL": "60",
+        "UCMCP_AUDIT_FILE": "audit.log",
+        "GITHUB_TOKEN": "ghp_replace_me",
+        "STRIPE_API_KEY": "sk_test_replace_me"
+      }
+    }
+  }
+}

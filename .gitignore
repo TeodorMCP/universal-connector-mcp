@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# Local config with secrets
+.env
+*.local.yaml
+apis.local.yaml
+audit.log
+
+# Editor
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Machine-local MCP config and connector state
+.cursor/
+.ucmcp-state.json
+e2e-state.json
