@@ -4,7 +4,7 @@
 
 # Universal API Connector MCP
 
-![Universal API Connector - Any API. One MCP server.](assets/banner.png)
+![Universal API Connector - Any API. One MCP server.](https://raw.githubusercontent.com/TeodorMCP/universal-connector-mcp/main/assets/banner.png)
 
 ### Any API. One MCP server.
 
@@ -33,7 +33,7 @@ Most "universal API" MCP servers only speak REST/OpenAPI. This project is built 
 
 ## How it works
 
-![One connector, every protocol](assets/how-it-works.png)
+![One connector, every protocol](https://raw.githubusercontent.com/TeodorMCP/universal-connector-mcp/main/assets/how-it-works.png)
 
 The agent explores APIs like a filesystem instead of loading hundreds of tools at once (which would blow up the context window on large APIs like Stripe). It searches for operations, inspects the ones it needs, then executes them.
 
@@ -70,7 +70,7 @@ flowchart TD
 
 ## Why fewer steps (and fewer tokens)
 
-![Fewer steps, fewer tokens](assets/fewer-steps.png)
+![Fewer steps, fewer tokens](https://raw.githubusercontent.com/TeodorMCP/universal-connector-mcp/main/assets/fewer-steps.png)
 
 Where a per-API MCP server needs one tool round-trip per call - each returning a full JSON payload into the agent's context - this server collapses whole workflows:
 

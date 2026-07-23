@@ -9,7 +9,7 @@
   "homepage": "https://github.com/TeodorMCP/universal-connector-mcp",
   "repository": "https://github.com/TeodorMCP/universal-connector-mcp",
   "license": "MIT",
-  "logo": "assets/logo.png",
+  "logo": "https://raw.githubusercontent.com/TeodorMCP/universal-connector-mcp/main/assets/icon-256.png",
   "keywords": [
     "mcp",
     "api",
