@@ -38,6 +38,19 @@ npx @anthropic-ai/mcpb pack mcpb dist/universal-connector-mcp.mcpb
 Note: `smithery mcp publish` CLI currently fails with "No values to set" for stdio bundles; the
 direct API call above works.
 
+Server card metadata (display name, description, icon) is stored separately from releases:
+
+```text
+PATCH https://api.smithery.ai/servers/teodormcp%2Funiversal-connector-mcp
+  JSON body: { displayName, description, homepage, repositoryUrl, license, iconUrl }
+PUT   https://api.smithery.ai/servers/teodormcp%2Funiversal-connector-mcp/icon
+  multipart file field: icon
+```
+
+Both take the same Bearer API key (Smithery dashboard -> API keys, stored in
+`%APPDATA%\smithery\settings.json`). The public registry endpoint caches responses,
+so changes can take a few minutes to appear.
+
 ## Directory submissions (one-time / occasional)
 
 - [cursor.directory](https://cursor.directory)
